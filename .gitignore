@@ -1,0 +1,10 @@
+# Ignore everything under "build"
+build/*
+
+# ignore text file
+*.txt
+# except cmake file
+!CMakeLists.txt 
+
+# ignore compiled python code
+*.pyc
