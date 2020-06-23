@@ -10,7 +10,7 @@
  * @param  n number of elements of input |data|
  * @retval transformed data in frequency domain, as an array of complex numbers 
  */
-complex* dft_forward(double* data, uint8_t n);
+complex* dft_complex_forward(double* data, uint32_t n);
 
 
 /**
@@ -22,7 +22,7 @@ complex* dft_forward(double* data, uint8_t n);
  * @retval transformed data represented by complex number, 
  *          real part of out_vector: amplitude of sinusoids, imaginary part of out_vector: amplitude of cosinusoids 
  */
-complex* dft_real_forward(double* data, uint8_t n);
+complex* dft_real_forward(double* data, uint32_t n);
 
 /**
  * @brief  synthesis DFT function
@@ -31,6 +31,6 @@ complex* dft_real_forward(double* data, uint8_t n);
  * @param  size: length of |waves|
  * @retval result of real inverse dft transform
  */
-double* dft_real_inverse(complex* waves, uint8_t size);
+double* dft_real_inverse(complex* waves, uint32_t size);
 
 #endif

@@ -1,16 +1,19 @@
+# plots graph of complex DFT
+# graph of original data points, and amplitude, phase after transformation
+
 import matplotlib
 import matplotlib.pyplot as plt
-from matplotlib import collections as matcoll
 import matplotlib.units as units
 import matplotlib.ticker as ticker
 import numpy as np
 
+import toolbox as tb
 
-def parse_file(in_file_name):
+def parse_file_complex_freq(in_file_name):
     """function parses a txt input file of complex numbers
 
     Args:
-        in_file_name ([type]): [description]
+        in_file_name ([type]): file name
 
     Returns:
         3-tuple: number of data points; list of amplitudes; list of phases
@@ -41,13 +44,9 @@ def graph(data, n, radians=False, original=False):
     y = data
     x = [i for i in range(n)]
 
-    lines = []
-    for i in range(len(x)):
-        pair=[(x[i],0), (x[i], y[i])]
-        lines.append(pair)
-
-    linecoll = matcoll.LineCollection(lines, colors="black")
     fig, ax = plt.subplots() 
+
+    tb.vertical_line(x, y, ax)
 
     # set the grid in graph
     plt.grid(linestyle='dashed', color='black') 
@@ -65,13 +64,13 @@ def graph(data, n, radians=False, original=False):
     if original:
         foot_note = "k"
 
-    ax.add_collection(linecoll)
     ax.axhline(0, color='black')
 
     ax.annotate(foot_note, xy=(1, 0), xycoords='axes fraction', fontsize=13,
                 xytext=(0, -15), textcoords='offset points',
                 ha='right', va='top')
 
+    # plot discrete data
     plt.scatter(x, y, linewidths=5, c='black', s=10)
     
     plt.xticks(x)
@@ -81,12 +80,16 @@ def graph_amplitude(amplitudes, n):
     graph(amplitudes, n)
     plt.ylim(0.3) # scale of y of amplitude
 
+    # plt.savefig("results/freq_amplitude.pdf")
+
     plt.show()
 
 
 def graph_phases(phase, n):
     graph(phase, n, True)
     plt.ylim([-3.6, 3.6]) # scale of y of phase
+
+    # plt.savefig("results/freq_phase.pdf")
 
     plt.show()
 
@@ -95,17 +98,25 @@ def graph_original(seq_orig, n):
     graph(seq_orig, n, original=True)
     plt.ylim([-4, 10]) # scale of y of original sequence
 
-    plt.show()
+    plt.savefig("results/original_seq.pdf")
+
+    # plt.show()
 
 
 
 def main():
     in_file_name = "build/forward_dft.txt"
-    n, amplitudes, phases = parse_file(in_file_name)
-    # graph_amplitude(amplitudes, n)
+    n, amplitudes, phases = parse_file_complex_freq(in_file_name)
+    graph_amplitude(amplitudes, n)
     # graph_phases(phases, n)
-    orig_seq = [2.0, 3.0, -1.0, 1.0, 2.5, 4.0, 3.2, 1.0, 5.0, 6.0, 4.3, 9.0, -3.0, 1.0, 2.5, 4.0, 3.2, 1.0, 5.0, 6.0]
-    graph_original(orig_seq, n)
+
+    # random
+    orig_seq = [2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 3.2, 1, 5, 6]
+    # impulse
+    # orig_seq = [0 for i in range(n)]; 
+    # orig_seq[0] = 1
+
+    # graph_original(orig_seq, n)
 
 
 if __name__ == '__main__':

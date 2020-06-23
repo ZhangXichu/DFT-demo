@@ -1,11 +1,11 @@
-// matrix representation of DFT
+// matrix representation of complex DFT
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
 #include "include/matrix.h"
 
-complex** dft_matrix(uint8_t n) {
+complex** dft_matrix(uint32_t n) {
     printf("dft_matrix\n");
     complex** matrix = (complex **)calloc(n, sizeof(complex*));
     int i, j;
@@ -21,7 +21,7 @@ complex** dft_matrix(uint8_t n) {
     return matrix;
 }
 
-void cpx_matrix_vector_multi(complex** matrix, complex* vector_in, complex* vector_out, uint8_t n){
+void cpx_matrix_vector_multi(complex** matrix, complex* vector_in, complex* vector_out, uint32_t n){
     int i, j;
     // complex* out_vector = (complex *)calloc(n, sizeof(complex));
     for (i = 0; i < n; i++){
@@ -34,7 +34,7 @@ void cpx_matrix_vector_multi(complex** matrix, complex* vector_in, complex* vect
     }
 }
 
-void cpx_print_matrix(complex** matrix, uint8_t n){
+void cpx_print_matrix(complex** matrix, uint32_t n){
     int i, j;
     for (i = 0; i < n; i++){
         for (j = 0; j < n; j++){

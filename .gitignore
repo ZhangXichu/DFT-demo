@@ -8,3 +8,6 @@ build/*
 
 # ignore compiled python code
 *.pyc
+
+# ignore result graphs
+*.pdf

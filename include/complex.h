@@ -27,6 +27,15 @@ complex cpx_cpx_mult(complex a, complex b);
  */
 complex cpx_to_trig(int i, int j, int M);
 
+/**
+ * @brief  function converts a sequence of real data to a sequence of complex data
+ * @note   the complex vector returned should be freed later
+ * @param  data_real: sequence of real data
+ * @param  N: length of input data
+ * @retval sequence of complex representation of the real data, with imaginary part set to 0
+ */
+complex* real_to_cpx(double* data_real, uint32_t N);
+
 // gets the amplitude of frequency
 double get_amplitude(complex c);
 
@@ -38,9 +47,10 @@ double get_phase(complex c);
  * @note   
  * @param  c: the complex number to write
  * @param  filename: 
+ * @param  stream: the file handle to be reopened
  * @retval 0 if successfull, -1 otherwise
  */
-int cpx_write(complex c, char* filename);
+int cpx_write(complex c, char* filename, FILE *stream);
 
 void cpx_print(complex c);
 

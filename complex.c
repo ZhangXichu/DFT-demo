@@ -33,24 +33,38 @@ complex cpx_to_trig(int i, int j, int M){
     return c;
 }
 
+complex* real_to_cpx(double* data_real, uint32_t N){
+    complex *res = (complex *)calloc(N, sizeof(complex));
+    uint32_t i;
+    for (i = 0; i < N; i++){
+        complex c = {0, 0};
+        c.real = data_real[i];
+        res[i] = c;
+    }
+    return res;
+}
+
 double get_amplitude(complex c){
     double res = pow(c.imaginary, 2) + pow(c.real, 2);
     return sqrt(res);
 }
 
 double get_phase(complex c){
-    double epsilon = pow(10, -6);
     double res = acos(c.real / get_amplitude(c));
     // in the third or forth octant
-    if (c.imaginary < -epsilon){
-        // printf("im = %f\n", c.imaginary);
+    if (c.real < -EPSILON){
+        // phase ranges in (-pi, pi]
         return -res;
     }
     return res;
+
+    // double res = atan2(c.imaginary, c.real);
+    // return res;
+
 }
 
-int cpx_write(complex c, char* filename){
-    FILE *out_file = fopen(filename, "a");
+int cpx_write(complex c, char* filename, FILE *stream){
+    FILE *out_file = freopen(filename, "a", stream);
     if (out_file == NULL){
         printf("Error: cannot open file.");
         exit(-1);

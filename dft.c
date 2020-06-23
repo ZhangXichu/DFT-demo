@@ -2,9 +2,9 @@
 # include <stdlib.h>
 # include <stdint.h>
 # include <math.h>
-# include "include/dft_small.h"
+# include "include/dft.h"
 
-complex* dft_forward(double* data, uint8_t n){
+complex* dft_complex_forward(double* data, uint32_t n){
     int i, j;
     complex* data_clx = (complex *)calloc(n, sizeof(complex));
 
@@ -22,31 +22,26 @@ complex* dft_forward(double* data, uint8_t n){
 }
 
 
-complex* dft_real_forward(double* data, uint8_t n){
-    int n_k, i, j;
-    if (n % 2 == 0){
-        n_k = n / 2;
-    }else{
-        n_k = (n - 1) / 2;
-    }
-    complex *out_vector = (complex *)calloc(n_k, sizeof(complex));
+complex* dft_real_forward(double* data, uint32_t N){
+    uint32_t i, j;
+    uint32_t size = N / 2 + 1;
+    complex *out_vector = (complex *)calloc(size, sizeof(complex));
 
-    for (i = 0; i < n_k; i++){
+    for (i = 0; i < size; i++){
         complex c = {0, 0};
-        for (j = 0; j < n; j++){
-            complex exp_pol = cpx_to_trig(j, i, n);
-            exp_pol = cpx_real_mult(exp_pol, data[j]);
-            c = cpx_addition(c, exp_pol);
+        for (j = 0; j < N; j++){
+            c.real = c.real + data[j] * cos(2 * M_PI * i * j / N);
+            c.imaginary = c.imaginary - data[j] * sin(2 * M_PI * i * j / N);
         }
         out_vector[i] = c;
     }
     return out_vector;
 }
 
-double* dft_real_inverse(complex* signals, uint8_t size){ // size = N / 2 + 1
-    uint8_t i;
-    uint8_t j;
-    uint8_t N = (size - 1) * 2; // number of points in time domain
+double* dft_real_inverse(complex* signals, uint32_t size){ // size = N / 2 + 1
+    uint32_t i;
+    uint32_t j;
+    uint32_t N = (size - 1) * 2; // number of points in time domain
     double *data = (double *) calloc(N, sizeof(double));
     for (i = 0; i < N; i++){
         // scale
@@ -66,5 +61,3 @@ double* dft_real_inverse(complex* signals, uint8_t size){ // size = N / 2 + 1
     return data;
 
 }
-
-// TODO: matrix representation
