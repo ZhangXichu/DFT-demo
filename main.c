@@ -2,11 +2,13 @@
 # include <stdint.h>
 # include <stdlib.h>
 # include <math.h>
+# include <time.h>
 
 # include "include/dft.h"
 # include "include/matrix.h"
 # include "include/config.h"
 # include "include/fft.h"
+# include "include/simple_rng.h"
 
 void print_cpx_vector(complex *vector, uint32_t n);
 void print_real_vector(double *vector, uint32_t n);
@@ -122,7 +124,7 @@ int main(){
         #ifdef TEST_DFT_FORWARD
         uint32_t N = 16;
         double data_real[16] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4};
-        complex *data_cpx = real_to_cpx(data_real, N);
+        complex *data_cpx = real_to_cpx_vector(data_real, N);
         complex *data_res = fft_radix2(data_cpx, N);
         print_cpx_vector(data_res, N);
 
@@ -177,6 +179,55 @@ int main(){
         }
         free(matrix_small);
     #endif
+
+    #ifdef SPEED_DFT_FFT
+    uint32_t size_exp;
+    uint32_t size;
+    clock_t time_start_dft, time_end_dft, time_dft, time_start_fft, time_end_fft, time_fft;
+
+    // first run takes more time
+    size = 2;
+    init_rand_vector(size);
+    prng(size);
+
+    complex *res_dft = dft_complex_forward(rand_vector_real, size);
+    complex *res_fft = fft_radix2(rand_vector_cpx, size);
+    
+    free(res_dft);
+    free(res_fft);
+    free(rand_vector_real);
+
+    char *filename = "dft_fft_speed.txt";
+    FILE *stream = fopen(filename, "w");
+    for (size_exp = 2; size_exp < 12; size_exp++){
+        size = (int)pow(2, size_exp);
+        init_rand_vector(size);
+        prng(size);
+
+        time_start_dft = clock();
+        complex *res_dft = dft_complex_forward(rand_vector_real, size);
+        time_end_dft = clock();
+        time_dft = time_end_dft - time_start_dft;
+        free(res_dft);
+
+        time_start_fft = clock();
+        complex *res_fft = fft_radix2(rand_vector_cpx, size);
+        time_end_fft = clock();
+        time_fft = time_end_fft - time_start_fft;
+        free(res_fft);
+
+        printf("size %d dft: %ld, fft: %ld\n", size, time_dft, time_fft);
+        FILE *out_file = freopen(filename, "a", stream);
+        fprintf(out_file, "%ld %ld\n", time_dft, time_fft); // format: [time_dft] [time_fft]
+        
+        free(rand_vector_real);
+    }
+
+
+
+    #endif
+    // TODO: make a test.c file to verify if the result is correct
+    // then send the binart file to frt server
     
 
     return ret;

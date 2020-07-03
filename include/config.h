@@ -6,6 +6,6 @@
 // #define TEST_DFT_REAL_FORWARD 1
 // #define TEST_DFT_REAL_INVERSE 1
 // #define TEST_MATRIX 1
-#define TEST_DFT_FORWARD 1
-
+// #define TEST_DFT_FORWARD 1
+#define SPEED_DFT_FFT 1
 #endif

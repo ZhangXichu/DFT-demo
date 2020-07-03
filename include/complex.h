@@ -1,6 +1,8 @@
 #ifndef COMPLEX_H
 #define COMPLEX_H
 
+#include <stdio.h>
+
 typedef struct complex
 {
     /* data */
@@ -34,7 +36,15 @@ complex cpx_to_trig(int i, int j, int M);
  * @param  N: length of input data
  * @retval sequence of complex representation of the real data, with imaginary part set to 0
  */
-complex* real_to_cpx(double* data_real, uint32_t N);
+complex* real_to_cpx_vector(double* data_real, uint32_t N);
+
+/**
+ * @brief  function converts a real number to a complex number
+ * @note   
+ * @param  num_real: input real number
+ * @retval complex number with real part set to |data_real| and imaginary part set to 0
+ */
+complex real_to_cpx(double num_real);
 
 // gets the amplitude of frequency
 double get_amplitude(complex c);

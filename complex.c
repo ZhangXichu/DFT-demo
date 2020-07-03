@@ -33,15 +33,22 @@ complex cpx_to_trig(int i, int j, int M){
     return c;
 }
 
-complex* real_to_cpx(double* data_real, uint32_t N){
+complex* real_to_cpx_vector(double* data_real, uint32_t N){
     complex *res = (complex *)calloc(N, sizeof(complex));
     uint32_t i;
     for (i = 0; i < N; i++){
-        complex c = {0, 0};
-        c.real = data_real[i];
-        res[i] = c;
+        // complex c = {0, 0};
+        // c.real = data_real[i];
+        // res[i] = c;
+        res[i] = real_to_cpx(data_real[i]);
     }
     return res;
+}
+
+complex real_to_cpx(double num_real){
+    complex c = {0, 0};
+    c.real = num_real;
+    return c;
 }
 
 double get_amplitude(complex c){
