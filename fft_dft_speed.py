@@ -28,12 +28,13 @@ def graph_dft_fft(in_file_name_time):
     plt.plot(x2, fft_time, '-o', color='k', label="FFT")
     plt.plot(x1, dft_time, '-x', color='k', label="DFT")
 
-    plt.ylabel("Speed")
+    plt.ylabel("Clock ticks")
     plt.xlabel("Exponent")
 
     plt.grid(linestyle='dashed', color='black') 
     plt.legend()
 
+    plt.savefig("results/fft_dft_speed.pdf")
     plt.show()
 
 

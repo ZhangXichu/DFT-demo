@@ -30,12 +30,14 @@ int main(){
             printf("Test DFT complex forward.\n");
             // uint32_t n = 4;
             uint32_t n = 20;
+            // uint32_t n = 21; // odd n
             // uint32_t n = 16;
 
             uint32_t i;
 
             // double data[4] = {2.0, 3.0, -1.0, 1.0};
             double data[20] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 3.2, 1, 5, 6};
+            // double data[21] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 3.2, 1, 5, 6, 5.5};
             // double data[16] = {1}; // impulse
 
             // double data[16] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0}; // bit sequence 1
@@ -71,14 +73,21 @@ int main(){
 
         #ifdef TEST_DFT_REAL_FORWARD
             // uint32_t size = 4;
-            uint32_t size = 16;
+            // uint32_t size = 16;
+            uint32_t size = 20;
 
             // double data[4] = {2, 3, -1, 1};
-            double data[16] = {1}; // impulse
+            // double data[16] = {1}; // impulse
+            double data[20] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 3.2, 1, 5, 6};
 
             
             complex *out_vector = dft_real_forward(data, size);
             print_cpx_vector(out_vector, size / 2);
+
+            char *filename_sig = "freq_complex_data.txt"; // file to store the transformned data
+            // erase the content in file first
+            FILE* out_sig = fopen(filename_sig, "w");
+            write_complex_vector(out_vector, size / 2, filename_sig, out_sig);
 
             free(out_vector);
         #endif
@@ -104,7 +113,7 @@ int main(){
 
             printf("The sinusoids and cosinusoids to be synthesized: \n");
             print_cpx_vector(signals, size);
-            char *filename_sig = "freq_complex_data.txt";
+            char *filename_sig = "freq_complex_data.txt"; // file to store the transformned data
             // erase the content in file first
             FILE* out_sig = fopen(filename_sig, "w");
             write_complex_vector(signals, size, filename_sig, out_sig);
@@ -199,7 +208,7 @@ int main(){
 
     char *filename = "dft_fft_speed.txt";
     FILE *stream = fopen(filename, "w");
-    for (size_exp = 2; size_exp < 12; size_exp++){
+    for (size_exp = 2; size_exp < 13; size_exp++){
         size = (int)pow(2, size_exp);
         init_rand_vector(size);
         prng(size);
@@ -216,9 +225,10 @@ int main(){
         time_fft = time_end_fft - time_start_fft;
         free(res_fft);
 
+        size_t k = (int) pow(10, 6); // constant for converting to microsecond
         printf("size %d dft: %ld, fft: %ld\n", size, time_dft, time_fft);
         FILE *out_file = freopen(filename, "a", stream);
-        fprintf(out_file, "%ld %ld\n", time_dft, time_fft); // format: [time_dft] [time_fft]
+        fprintf(out_file, "%ld %ld\n", time_end_dft, time_fft); // format: [time_dft] [time_fft]
         
         free(rand_vector_real);
     }
@@ -227,7 +237,6 @@ int main(){
 
     #endif
     // TODO: make a test.c file to verify if the result is correct
-    // then send the binart file to frt server
     
 
     return ret;

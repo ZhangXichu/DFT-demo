@@ -16,18 +16,22 @@ def parse_file_complex_freq(in_file_name):
         in_file_name ([type]): file name
 
     Returns:
-        3-tuple: number of data points; list of amplitudes; list of phases
+        4-tuple: number of data points; list of amplitudes; list of phases, lst_re, lst_im
     """
     in_file = open(in_file_name, "r")
     cpx_numbers = in_file.readlines()
     amplitudes = []
     phases = []
+    lst_re = []
+    lst_im = []
     for cpx_line in cpx_numbers:
         tokens = cpx_line.split()
         # each line in in file is of form [re] [im] [ampl] [phase]
         amplitudes.append(float(tokens[2]))
         phases.append(float(tokens[3]))
-    return len(amplitudes), amplitudes, phases
+        lst_re.append(float(tokens[0]))
+        lst_im.append(float(tokens[1]))
+    return len(amplitudes), amplitudes, phases, lst_re, lst_im
 
 
 # TODO: improve the functions for different range of amplitude and phase
@@ -78,9 +82,13 @@ def graph(data, n, radians=False, original=False):
 
 def graph_amplitude(amplitudes, n):
     graph(amplitudes, n)
-    plt.ylim(0.3) # scale of y of amplitude
+    # plt.ylim(0.3) # scale of y of amplitude
+    # plt.ylim([-20, 65.5])  # scale of y of amplitude in Re X[]
+    plt.ylim([-20, 20])  # scale of y of amplitude in Im X[]
 
     # plt.savefig("results/freq_amplitude.pdf")
+    # plt.savefig("results/freq_re.pdf")
+    plt.savefig("results/freq_im.pdf")
 
     plt.show()
 
@@ -106,12 +114,15 @@ def graph_original(seq_orig, n):
 
 def main():
     in_file_name = "build/forward_dft.txt"
-    n, amplitudes, phases = parse_file_complex_freq(in_file_name)
-    graph_amplitude(amplitudes, n)
+    n, amplitudes, phases, lst_re, lst_im = parse_file_complex_freq(in_file_name)
+    # graph_amplitude(amplitudes, n)
+    # graph_amplitude(lst_re, n)
+    graph_amplitude(lst_im, n)
     # graph_phases(phases, n)
 
     # random
-    orig_seq = [2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 3.2, 1, 5, 6]
+    # orig_seq = [2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 3.2, 1, 5, 6]  # even length 20
+    orig_seq = [2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 3.2, 1, 5, 6, 21]  # odd length 21
     # impulse
     # orig_seq = [0 for i in range(n)]; 
     # orig_seq[0] = 1

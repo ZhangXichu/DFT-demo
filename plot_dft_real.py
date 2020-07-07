@@ -6,6 +6,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import collections as matcoll
 
+import toolbox as tb
+
 # setup test data
 impulse = 0
 simple_wave = 1
@@ -96,26 +98,48 @@ def graph_real_dft_freq(in_file_complex):
     y2 = lst_re
 
     # graph of Im X[]
+    fig, ax = plt.subplots() 
+    # add bold line at y = 0
+    ax.axhline(0, color='black')
+    # set the label size of x and y axis
+    ax.yaxis.set_tick_params(labelsize=14)
+    ax.xaxis.set_tick_params(labelsize=14)
+
     plt.scatter(x, y1, linewidths=4, c='black', s=10)
-    plt.ylim(y_li2)
-    plt.ylabel("Amplitude")
-    plt.xlabel("Index")
+    # plt.ylim(y_li2)
+    plt.ylim([-20, 20]) # for the random data sequence
+    # set title and title size of x and y axis
+    plt.ylabel("Amplitude", fontsize=14)
+    plt.xlabel("Index", fontsize=14)
     plt.grid(linestyle='dashed', color='black') 
 
-    plt.savefig("results/" + prefix + "_freq_im.pdf")
+    tb.vertical_line(x, y1, ax)
+
+    # plt.savefig("results/" + prefix + "_freq_im.pdf")
+    plt.savefig("results/rand_freq_im.pdf") # for the random data with length 20
+    plt.show()
 
     # graph of Re X[]
     fig, ax = plt.subplots()
+    # set the label size of x and y axis
+    ax.yaxis.set_tick_params(labelsize=14)
+    ax.xaxis.set_tick_params(labelsize=14)
     # add bold line at y = 0
     ax.axhline(0, color='black')
 
     plt.scatter(x, y2, linewidths=4, c='black', s=10)
-    plt.ylim(y_li2)
-    plt.ylabel("Amplitude")
-    plt.xlabel("Index")
+    # plt.ylim(y_li2)
+    plt.ylim([-20, 65.5]) # for the random data sequence
+    # set title and title size of x and y axis
+    plt.ylabel("Amplitude", fontsize=14)
+    plt.xlabel("Index", fontsize=14)
     plt.grid(linestyle='dashed', color='black') 
 
-    plt.savefig("results/" + prefix + "_freq_re.pdf")
+    tb.vertical_line(x, y2, ax)
+
+    # plt.savefig("results/" + prefix + "_freq_re.pdf")
+    plt.savefig("results/rand_freq_re.pdf") # for the random data with length 20
+    plt.show()
 
 
 
