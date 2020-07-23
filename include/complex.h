@@ -29,6 +29,7 @@ complex cpx_cpx_mult(complex a, complex b);
  */
 complex cpx_to_trig(int i, int j, int M);
 
+
 /**
  * @brief  function converts a sequence of real data to a sequence of complex data
  * @note   the complex vector returned should be freed later
@@ -45,6 +46,14 @@ complex* real_to_cpx_vector(double* data_real, uint32_t N);
  * @retval complex number with real part set to |data_real| and imaginary part set to 0
  */
 complex real_to_cpx(double num_real);
+
+/**
+ * @brief  function computes the complex conjuage of a given number
+ * @note   
+ * @param  c: a complex number
+ * @retval complex conjugate of |c|
+ */
+complex cpx_conjugate(complex c);
 
 // gets the amplitude of frequency
 double get_amplitude(complex c);

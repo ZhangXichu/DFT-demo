@@ -28,16 +28,16 @@ int main(){
     #ifdef TEST_TRANSFORMATION
         #ifdef TEST_DFT_COMPLEX_FORWARD
             printf("Test DFT complex forward.\n");
-            // uint32_t n = 4;
-            uint32_t n = 20;
+            uint32_t n = 4;
+            // uint32_t n = 20;
             // uint32_t n = 21; // odd n
             // uint32_t n = 16;
 
             uint32_t i;
 
-            // double data[4] = {2.0, 3.0, -1.0, 1.0};
-            double data[20] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 3.2, 1, 5, 6};
-            // double data[21] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 3.2, 1, 5, 6, 5.5};
+            double data[4] = {1, 0 , 2, 0};
+            // double data[20] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 3.2, 1, 5, 6};
+            // double data[21] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 3.2, 1, 5, 6, 0};
             // double data[16] = {1}; // impulse
 
             // double data[16] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0}; // bit sequence 1
@@ -67,6 +67,11 @@ int main(){
             for (i = 0; i < n; i++){
                 printf("%0.2f\n", get_phase(res[i]));
             }
+            printf("\n");
+
+            printf("Output comlex numbers after transformation: \n");
+            print_cpx_vector(res, n);
+            printf("\n");
 
             free(res);
         #endif
@@ -130,15 +135,58 @@ int main(){
             free(data);
         #endif
 
-        #ifdef TEST_DFT_FORWARD
-        uint32_t N = 16;
-        double data_real[16] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4};
-        complex *data_cpx = real_to_cpx_vector(data_real, N);
-        complex *data_res = fft_radix2(data_cpx, N);
-        print_cpx_vector(data_res, N);
+        #ifdef TEST_FFT
+            uint32_t N = 16;
+            double data_real[16] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4};
+            complex *data_cpx = real_to_cpx_vector(data_real, N);
 
-        free(data_res);
+            complex* c_arr = prep_real_fft(data_real, N);
+            N = N/2;
+            
+            printf("FFT: forward.\n");
+            complex *data_res = fft_radix2_forward(c_arr, N);
+            print_cpx_vector(data_res, N);
+            printf("\n");
 
+            printf("FFT: inverse.\n");
+            complex *data_res_i = fft_radix2_inverse(data_res, N);
+            print_cpx_vector(data_res_i, N);
+
+            free(data_res);
+            free(data_res_i);
+
+        #endif
+
+        #ifdef TEST_REAL_FFT
+            uint32_t N = 16;
+            double data_real[16] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4};
+            // uint32_t N = 4;
+            // double data_real[4] = {1, 0, 2, 0};
+            printf("real FFT: forward.\n");
+            complex *data_res = real_fft_forward(data_real, N);
+            print_cpx_vector(data_res, N);
+            printf("\n");
+
+            free(data_res);
+        #endif
+
+        #ifdef TEST_FFT_PRIME
+            // uint32_t N = 17;
+            // uint32_t g = 3; // 3 is a primitive root pf 17
+            // double data_real[17] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 6};
+
+            // small
+            uint32_t N = 5;
+            uint32_t g = 2; // 3 is a primitive root pf 17
+            double data_real[5] = {2, 3, -1, 1, 2.5};
+
+            complex *data_cpx = real_to_cpx_vector(data_real, N);
+            printf("FFT prime input length: forward.\n");
+            complex* res = fft_prime(data_cpx, N, g);
+            print_cpx_vector(res, N);
+            printf("\n");
+
+            free(res);
         #endif
 
 
@@ -200,7 +248,7 @@ int main(){
     prng(size);
 
     complex *res_dft = dft_complex_forward(rand_vector_real, size);
-    complex *res_fft = fft_radix2(rand_vector_cpx, size);
+    complex *res_fft = fft_radix2_forward(rand_vector_cpx, size);
     
     free(res_dft);
     free(res_fft);
@@ -220,7 +268,7 @@ int main(){
         free(res_dft);
 
         time_start_fft = clock();
-        complex *res_fft = fft_radix2(rand_vector_cpx, size);
+        complex *res_fft = fft_radix2_forward(rand_vector_cpx, size);
         time_end_fft = clock();
         time_fft = time_end_fft - time_start_fft;
         free(res_fft);
@@ -232,9 +280,6 @@ int main(){
         
         free(rand_vector_real);
     }
-
-
-
     #endif
     // TODO: make a test.c file to verify if the result is correct
     

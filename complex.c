@@ -51,6 +51,11 @@ complex real_to_cpx(double num_real){
     return c;
 }
 
+complex cpx_conjugate(complex c){
+    c.imaginary = -c.imaginary;
+    return c;
+}
+
 double get_amplitude(complex c){
     double res = pow(c.imaginary, 2) + pow(c.real, 2);
     return sqrt(res);
@@ -65,9 +70,9 @@ double get_phase(complex c){
     }
     return res;
 
+    // use arctan to get the phase, not used because of condition check (octants)
     // double res = atan2(c.imaginary, c.real);
     // return res;
-
 }
 
 int cpx_write(complex c, char* filename, FILE *stream){

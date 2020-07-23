@@ -88,7 +88,7 @@ def graph_amplitude(amplitudes, n):
 
     # plt.savefig("results/freq_amplitude.pdf")
     # plt.savefig("results/freq_re.pdf")
-    plt.savefig("results/freq_im.pdf")
+    # plt.savefig("results/freq_im.pdf")s
 
     plt.show()
 
@@ -116,7 +116,7 @@ def main():
     in_file_name = "build/forward_dft.txt"
     n, amplitudes, phases, lst_re, lst_im = parse_file_complex_freq(in_file_name)
     # graph_amplitude(amplitudes, n)
-    # graph_amplitude(lst_re, n)
+    graph_amplitude(lst_re, n)
     graph_amplitude(lst_im, n)
     # graph_phases(phases, n)
 
