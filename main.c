@@ -57,21 +57,35 @@ int main(){
             }
             printf("\n");
 
-            printf("Output amplitude: \n");
-            for (i = 0; i < n; i++){
-                printf("%0.2f\n", get_amplitude(res[i]));
-            }
+            // printf("Output amplitude: \n");
+            // for (i = 0; i < n; i++){
+            //     printf("%0.2f\n", get_amplitude(res[i]));
+            // }
+            // printf("\n");
+
+            // printf("Output phase: \n");
+            // for (i = 0; i < n; i++){
+            //     printf("%0.2f\n", get_phase(res[i]));
+            // }
+            // printf("\n");
+
+            // printf("Output comlex numbers after transformation: \n");
+            // print_cpx_vector(res, n);
+            // printf("\n");
+
+            printf("Test DFT complex forward - complex.\n");
+            complex c0 = {-0.81, -0.59};
+            complex c1 = {0.31, 0.95};
+            complex c2 = {-0.81, 0.59};
+            complex c3 = {0.31, -0.95};
+            complex data_c[] = {c0, c1, c2, c3};
+            complex* res_c = dft_complex_forward_c(data_c, n);
+            print_cpx_vector(res_c, n);
             printf("\n");
 
-            printf("Output phase: \n");
-            for (i = 0; i < n; i++){
-                printf("%0.2f\n", get_phase(res[i]));
-            }
-            printf("\n");
-
-            printf("Output comlex numbers after transformation: \n");
-            print_cpx_vector(res, n);
-            printf("\n");
+            printf("Test DFT complex inverse - complex.\n");
+            complex* res_ci = dft_complex_inverse_c(res_c, n);
+            print_cpx_vector(res_ci, n);
 
             free(res);
         #endif
@@ -140,11 +154,11 @@ int main(){
             double data_real[16] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4};
             complex *data_cpx = real_to_cpx_vector(data_real, N);
 
-            complex* c_arr = prep_real_fft(data_real, N);
-            N = N/2;
+            // complex* c_arr = prep_real_fft(data_real, N);
+            // N = N/2;
             
             printf("FFT: forward.\n");
-            complex *data_res = fft_radix2_forward(c_arr, N);
+            complex *data_res = fft_radix2_forward(data_cpx, N);
             print_cpx_vector(data_res, N);
             printf("\n");
 
@@ -171,14 +185,14 @@ int main(){
         #endif
 
         #ifdef TEST_FFT_PRIME
-            // uint32_t N = 17;
-            // uint32_t g = 3; // 3 is a primitive root pf 17
-            // double data_real[17] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 6};
+            uint32_t N = 17;
+            uint32_t g = 3; // 3 is a primitive root of 17
+            double data_real[17] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 1};
 
             // small
-            uint32_t N = 5;
-            uint32_t g = 2; // 3 is a primitive root pf 17
-            double data_real[5] = {2, 3, -1, 1, 2.5};
+            // uint32_t N = 5;
+            // uint32_t g = 2; // 2 is a primitive root of 5
+            // double data_real[5] = {2, 3, -1, 1, 2.5};
 
             complex *data_cpx = real_to_cpx_vector(data_real, N);
             printf("FFT prime input length: forward.\n");

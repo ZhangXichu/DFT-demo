@@ -4,14 +4,24 @@
 # include "complex.h"
 
 /**
- * @brief  forward transformation (analysis)
+ * @brief  forward transformation
  * @note   array returned by this function should be freed later
- * @param  data: data in time domain
+ * @param  data: data in time domain, real
  * @param  n number of elements of input |data|
  * @retval transformed data in frequency domain, as an array of complex numbers 
  */
 complex* dft_complex_forward(double* data, uint32_t n);
 
+/**
+ * @brief  forward transformation 
+ * @note   array returned by this function should be freed later
+ * @param  data: data in time domain, complex 
+ * @param  n: number of elements of input |data|
+ * @retval transformed data in frequency domain, as an array of complex numbers 
+ */
+complex* dft_complex_forward_c(complex* data, uint32_t n);
+
+complex* dft_complex_inverse_c(complex* data, uint32_t n);
 
 /**
  * @brief  function computes real DFT transformation, results represented with complex numbers

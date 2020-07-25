@@ -21,6 +21,50 @@ complex* dft_complex_forward(double* data, uint32_t n){
     return data_clx;
 }
 
+// refactor these two functions
+// takes complex input data
+complex* dft_complex_forward_c(complex* data, uint32_t n){
+    int i, j;
+    complex* res_clx = (complex *)calloc(n, sizeof(complex));
+
+    for (i = 0; i < n; i ++){
+        complex c = {0, 0};
+        for (j = 0; j < n; j++){
+            complex exp_pol = cpx_to_trig(j, i, n);
+            exp_pol = cpx_cpx_mult(exp_pol, data[j]);
+
+            c = cpx_addition(c, exp_pol);
+        }
+        res_clx[i] = c;
+        // cpx_print(c);
+    }
+    return res_clx;
+}
+
+// takes complex input data, inverse
+complex* dft_complex_inverse_c(complex* data, uint32_t n){
+    int i, j;
+    complex* res_clx = (complex *)calloc(n, sizeof(complex));
+
+    for (i = 0; i < n; i ++){
+        complex c = {0, 0};
+        for (j = 0; j < n; j++){
+            complex exp_pol = cpx_to_trig(j, i, -n);
+            exp_pol = cpx_cpx_mult(exp_pol, data[j]);
+
+            c = cpx_addition(c, exp_pol);
+        }
+        res_clx[i] = c;
+        // cpx_print(c);
+    }
+
+    // scaling
+    for (i = 0; i<n; i++){
+        res_clx[i] = cpx_real_mult(res_clx[i], 1.0 / n);
+    }
+    return res_clx;
+}
+
 
 complex* dft_real_forward(double* data, uint32_t N){
     uint32_t i, j;
