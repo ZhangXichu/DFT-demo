@@ -60,76 +60,6 @@ complex* fft_radix2_inverse(complex* data, uint32_t N){
 }
 
 
-complex* prep_real_fft(double* real_data, uint32_t N){
-    uint32_t i;
-    uint32_t half_size = N / 2;
-    complex* cpx_data = (complex *)calloc(half_size, sizeof(complex));
-    for (i = 0; i < half_size; i++){
-        complex c;
-        c.real = real_data[i * 2]; // Re 
-        c.imaginary = real_data[i * 2 + 1]; // Im
-        cpx_data[i] = c;
-    }
-    return cpx_data;
-}
-
-// Don't use. function doesn't give correct result, need debug 
-complex* real_fft_forward(double* data, uint32_t N){
-    uint32_t i;
-    complex* in_cpx = prep_real_fft(data, N);
-
-    // use original radix2 fft to compute the transformation of size N / 2
-    // no need to free |in_cpx|
-    complex* G = fft_radix2_forward(in_cpx, N/2);
-
-    printf("Transformation of size N/2\n");
-    for (i = 0; i < N/2; i++){
-        cpx_print(G[i]);
-        printf("\n");
-    }
-    printf("\n");
-    //////////
-
-    // reconstruct the reslut of size N from |G|, this will be an complex array of size N
-    complex* res_n = (complex *)calloc(N, sizeof(complex));
-    printf("Res real FFT: \n");
-    for (i = 0; i < N/2; i++){
-
-        // complex B = {0.5 + 0.5 * Br(i, N/2), 0.5 * Bi(i, N/2)};
-        // complex A = {0.5 + 0.5 * Ar(i, N/2), 0.5 * Ai(i, N/2)};
-
-        // complex G_ = cpx_conjugate(G[N/2 - i]);
-        // res_n[i] = cpx_addition(cpx_cpx_mult(G[i], B), cpx_cpx_mult(G_, A));
-
-        double r1 = 0.5 * (G[i].real + G[N/2 - i].real);
-        double r2 = 0.5 * cos(2 * M_PI * i / N) * (G[i].imaginary + G[N/2 - i].imaginary);
-        double r3 = 0.5 * sin(2 * M_PI * i / N) * (G[i].real + G[N/2 - i].real);
-
-        double i1 = 0.5 * (G[i].imaginary - G[N/2 - i].imaginary);
-        double i2 = 0.5 * sin(2 * M_PI * i / N) * (G[i].imaginary + G[N/2 - i].imaginary);
-        double i3 = 0.5 * cos(2 * M_PI * i / N) * (G[i].real + G[N/2 - i].real);
-
-        res_n[i].real = r1 + r2 - r3;
-        res_n[i].imaginary = i1 - i2 - i3;
-
-        // the other half: k = N/2...N-1
-        // X[k] = X*[N - k]
-        res_n[N - i] = cpx_conjugate(res_n[i]);
-    }
-    printf("\n");
-
-    free(G);
-
-    return res_n;
-}
-
-// TODO: try the padding version
-// // init sequences {bi} and {ci}
-//     // find the smallest N_ such that N_ > 2N - 4 and N is a power of 2
-//     uint32_t size_new = 16; // placeholder, for the case where N = 7
-//     uint32_t num_zeros = size_new - N + 1;
-
-
 // N is a prime (in the case N = 17, N - 1 is a power of two => reduce to a radix FFT)
 complex *fft_prime(complex* data, uint32_t N, uint32_t g){ // g is the generator of cyclic group mod N
     uint32_t i;
@@ -137,12 +67,6 @@ complex *fft_prime(complex* data, uint32_t N, uint32_t g){ // g is the generator
     complex* arr_agi = (complex *)calloc(N-1, sizeof(complex));
     for (i = 1; i < N; i++){
         uint32_t index = mulp_inverse((int)pow(g, i) % N, N);
-
-        #ifdef DEBUG
-            printf("g^%d: %d\n",i , (int)pow(g, i) % N);
-            printf("index: %d\n", index);
-        #endif
-
 
         arr_agi[i-1] = data[index]; 
     }
@@ -153,16 +77,6 @@ complex *fft_prime(complex* data, uint32_t N, uint32_t g){ // g is the generator
         arr_e[i-1] = cpx_to_trig(1, j, N);
     }
 
-    #ifdef DEBUG
-        printf("arr_agi: \n");
-        print_cpx_vector2(arr_agi, N-1);
-        printf("\n");
-        printf("arr_e: \n");
-        print_cpx_vector2(arr_e, N-1);
-        printf("\n");
-    #endif
-
-
     // calculate x_0
     complex x0 = {0, 0};
     for (i = 0; i < N; i++){
@@ -171,47 +85,11 @@ complex *fft_prime(complex* data, uint32_t N, uint32_t g){ // g is the generator
     complex* res_agi = fft_radix2_forward(arr_agi, N-1);
     complex* res_e = fft_radix2_forward(arr_e, N-1);
 
-    #ifdef DEBUG
-        printf("res_agi: \n");
-        print_cpx_vector2(res_agi, N-1);
-        printf("\n");
-        printf("res_e: \n");
-        print_cpx_vector2(res_e, N-1);
-        printf("\n");
-    #endif
-
     // cyclic convolution of |res_agi| and |res_e|
     complex* res_ae = (complex *)calloc(N-1, sizeof(complex));
     for (i = 0; i < N-1; i++){
         res_ae[i] = cpx_cpx_mult(res_agi[i], res_e[i]);
     }
-
-    #ifdef DEBUG
-    printf("res_ae: \n");
-    print_cpx_vector2(res_ae, N-1);
-    printf("\n");
-
-    // try to calculate X_k directly with convolution
-    // this algorithm gives a complexity of O(N^2)
-    int k;
-        for (k = 1; k < N; k++){
-            printf("k: %d\n", k);
-            complex xk = {0, 0};
-            for (i = 0; i < N-1; i++){
-                complex a, b, c;
-                uint32_t index_a = (int)(pow(g, i)) % N;
-                a = data[index_a];
-                int gik = (int)(pow(g, i+k)) % N;
-                b = cpx_to_trig(gik, 1, N);
-                c = cpx_cpx_mult(a, b);
-                xk = cpx_addition(xk, c);
-            }
-            xk = cpx_addition(xk, data[0]);
-            printf("xk: ");
-            cpx_print(xk);
-            printf("\n");
-        }
-    #endif
 
     // compute the DFT^-1
     complex* res_ = fft_radix2_inverse(res_ae, N-1);

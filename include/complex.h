@@ -2,6 +2,7 @@
 #define COMPLEX_H
 
 #include <stdio.h>
+#include <stdint.h>
 
 typedef struct complex
 {

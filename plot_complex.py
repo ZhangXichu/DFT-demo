@@ -83,12 +83,15 @@ def graph(data, n, radians=False, original=False):
 def graph_amplitude(amplitudes, n):
     graph(amplitudes, n)
     # plt.ylim(0.3) # scale of y of amplitude
-    # plt.ylim([-20, 65.5])  # scale of y of amplitude in Re X[]
-    plt.ylim([-20, 20])  # scale of y of amplitude in Im X[]
-
+    
+    # configure the filename and corresponding range of values
     # plt.savefig("results/freq_amplitude.pdf")
-    # plt.savefig("results/freq_re.pdf")
-    # plt.savefig("results/freq_im.pdf")s
+
+    # plt.ylim([-20, 65.5])  # scale of y of amplitude in Re X[]
+    # plt.savefig("results/freq_re_even.pdf")
+
+    plt.ylim([-25, 25])  # scale of y of amplitude in Im X[]
+    plt.savefig("results/freq_im_even.pdf")
 
     plt.show()
 
@@ -116,7 +119,7 @@ def main():
     in_file_name = "build/forward_dft.txt"
     n, amplitudes, phases, lst_re, lst_im = parse_file_complex_freq(in_file_name)
     # graph_amplitude(amplitudes, n)
-    graph_amplitude(lst_re, n)
+    # graph_amplitude(lst_re, n)
     graph_amplitude(lst_im, n)
     # graph_phases(phases, n)
 

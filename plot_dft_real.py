@@ -83,7 +83,7 @@ def graph_1d_real_data(lst_real_data):
 
     plt.grid(linestyle='dashed', color='black') 
 
-    plt.savefig("results/" + prefix + "_time_domain.pdf")
+    # plt.savefig("results/" + prefix + "_time_domain.pdf")
 
 
 def graph_real_dft_freq(in_file_complex):
@@ -107,7 +107,7 @@ def graph_real_dft_freq(in_file_complex):
 
     plt.scatter(x, y1, linewidths=4, c='black', s=10)
     # plt.ylim(y_li2)
-    plt.ylim([-20, 20]) # for the random data sequence
+    plt.ylim([-20, 25]) # for the random data sequence
     # set title and title size of x and y axis
     plt.ylabel("Amplitude", fontsize=14)
     plt.xlabel("Index", fontsize=14)
@@ -116,7 +116,7 @@ def graph_real_dft_freq(in_file_complex):
     tb.vertical_line(x, y1, ax)
 
     # plt.savefig("results/" + prefix + "_freq_im.pdf")
-    plt.savefig("results/rand_freq_im.pdf") # for the random data with length 20
+    # plt.savefig("results/rand_freq_even_im.pdf") # for the random data with length 20
     plt.show()
 
     # graph of Re X[]
@@ -129,7 +129,7 @@ def graph_real_dft_freq(in_file_complex):
 
     plt.scatter(x, y2, linewidths=4, c='black', s=10)
     # plt.ylim(y_li2)
-    plt.ylim([-20, 65.5]) # for the random data sequence
+    plt.ylim([-20, 69.5]) # for the random data sequence
     # set title and title size of x and y axis
     plt.ylabel("Amplitude", fontsize=14)
     plt.xlabel("Index", fontsize=14)
@@ -138,7 +138,7 @@ def graph_real_dft_freq(in_file_complex):
     tb.vertical_line(x, y2, ax)
 
     # plt.savefig("results/" + prefix + "_freq_re.pdf")
-    plt.savefig("results/rand_freq_re.pdf") # for the random data with length 20
+    plt.savefig("results/rand_freq_even_re.pdf") # for the random data with length 20, (Re X[], cos)
     plt.show()
 
 

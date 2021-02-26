@@ -3,6 +3,7 @@
 # include <stdlib.h>
 # include <math.h>
 # include <time.h>
+# include <stdbool.h>
 
 # include "include/dft.h"
 # include "include/matrix.h"
@@ -14,6 +15,7 @@ void print_cpx_vector(complex *vector, uint32_t n);
 void print_real_vector(double *vector, uint32_t n);
 void write_real_vector(double *vector, uint32_t n, char *filename, FILE *stream);
 void write_complex_vector(complex *vector, uint32_t n, char *filename, FILE *stream);
+bool complex_vec_comp(complex *v1, complex *v2, uint32_t n);
 
 
 /**
@@ -28,20 +30,25 @@ int main(){
     #ifdef TEST_TRANSFORMATION
         #ifdef TEST_DFT_COMPLEX_FORWARD
             printf("Test DFT complex forward.\n");
-            uint32_t n = 4;
-            // uint32_t n = 20;
-            // uint32_t n = 21; // odd n
+            // uint32_t n = 4;
             // uint32_t n = 16;
+            uint32_t n = 20;  
 
             uint32_t i;
 
-            double data[4] = {1, 0 , 2, 0};
-            // double data[20] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 3.2, 1, 5, 6};
-            // double data[21] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 3.2, 1, 5, 6, 0};
-            // double data[16] = {1}; // impulse
+            // double data[4] = {1, 0 , 2, 0};
+            double data[20] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 3.2, 1, 5, 6};
+            complex sol[20] = {{59.7, 0}, {-6.388,0.679}, {9.112, 14.138}, {-6.445,2.952}, {17.149,6.898}, {-4.3,6}, {-7.212,6.898},{0.609,6.756},
+                {-11.249,-14.138}, {5.024,3.03}, {-12.3,0},{5.024,3.03}, {-11.249,14.138}, {0.609,-6.756}, {-7.212,6.898}, {-4.3,-6},
+                {17.149,-6.898}, {-6.445,-2.952}, {9.112,-14.138}, {-6.388,-0.679}};
 
+
+            // double data[16] = {1}; // impulse
             // double data[16] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0}; // bit sequence 1
             // double data[16] = {1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}; // bit sequence 2
+
+            // uint32_t n = 21; // odd n
+            // double data[21] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 3.2, 1, 5, 6, 9};
 
             // complex *res = dft_complex_forward(data, n);
             complex *res = dft_complex_forward(data, n);
@@ -49,6 +56,12 @@ int main(){
             // output the transformed series
             char *filename = "forward_dft.txt";
             FILE *out_file = fopen(filename, "w");
+
+            if (out_file == NULL) {
+                printf("Error in opening new file.\n");
+                exit(1);
+            }
+
             for (i = 0; i < n; i++){
                 cpx_print(res[i]);
                 printf("\n");
@@ -57,35 +70,45 @@ int main(){
             }
             printf("\n");
 
-            // printf("Output amplitude: \n");
-            // for (i = 0; i < n; i++){
-            //     printf("%0.2f\n", get_amplitude(res[i]));
-            // }
-            // printf("\n");
+            printf("Output amplitude: \n");
+            for (i = 0; i < n; i++){
+                printf("%0.2f\n", get_amplitude(res[i]));
+            }
+            printf("\n");
 
-            // printf("Output phase: \n");
-            // for (i = 0; i < n; i++){
-            //     printf("%0.2f\n", get_phase(res[i]));
-            // }
-            // printf("\n");
+            printf("Output phase: \n");
+            for (i = 0; i < n; i++){
+                printf("%0.2f\n", get_phase(res[i]));
+            }
+            printf("\n");
 
-            // printf("Output comlex numbers after transformation: \n");
-            // print_cpx_vector(res, n);
-            // printf("\n");
+            printf("Output comlex numbers after transformation: \n");
+            print_cpx_vector(res, n);
 
+            complex_vec_comp(res, sol, n);
+
+            // n = 4;
+            n = 8;
             printf("Test DFT complex forward - complex.\n");
             complex c0 = {-0.81, -0.59};
             complex c1 = {0.31, 0.95};
             complex c2 = {-0.81, 0.59};
             complex c3 = {0.31, -0.95};
-            complex data_c[] = {c0, c1, c2, c3};
+            complex c4 = {1.57, -5.67};
+            complex c5 = {0.64,-12.04};
+            complex c6 = {-0.81, 0.59};
+            complex c7 = {0.31, 11.87};
+            complex data_c[] = {c0, c1, c2, c3, c4, c5, c6, c7};
             complex* res_c = dft_complex_forward_c(data_c, n);
             print_cpx_vector(res_c, n);
             printf("\n");
 
             printf("Test DFT complex inverse - complex.\n");
             complex* res_ci = dft_complex_inverse_c(res_c, n);
+
             print_cpx_vector(res_ci, n);
+
+            complex_vec_comp(res_ci, data_c, n);
 
             free(res);
         #endif
@@ -98,15 +121,23 @@ int main(){
             // double data[4] = {2, 3, -1, 1};
             // double data[16] = {1}; // impulse
             double data[20] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 3.2, 1, 5, 6};
+            complex sol[20] = {{59.7, 0}, {-6.388,0.679}, {9.112, 14.138}, {-6.445,2.952}, {17.149,6.898}, {-4.3,6}, {-7.212,6.898},{0.609,6.756},
+                {-11.249,-14.138}, {5.024,3.03}, {-12.3,0},{5.024,3.03}, {-11.249,14.138}, {0.609,-6.756}, {-7.212,6.898}, {-4.3,-6},
+                {17.149,-6.898}, {-6.445,-2.952}, {9.112,-14.138}, {-6.388,-0.679}};
 
-            
+            // odd length
+            // uint32_t size = 21;
+            // double data[21] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 3.2, 1, 5, 6, 9};
+
             complex *out_vector = dft_real_forward(data, size);
-            print_cpx_vector(out_vector, size / 2);
+            print_cpx_vector(out_vector, size/2 + 1);
 
-            char *filename_sig = "freq_complex_data.txt"; // file to store the transformned data
+            complex_vec_comp(out_vector, sol, size);
+
+            char *filename = "dft_real.txt"; // file to store the transformned data
             // erase the content in file first
-            FILE* out_sig = fopen(filename_sig, "w");
-            write_complex_vector(out_vector, size / 2, filename_sig, out_sig);
+            FILE* out = fopen(filename, "w");
+            write_complex_vector(out_vector, size / 2 + 1, filename, out);
 
             free(out_vector);
         #endif
@@ -119,20 +150,20 @@ int main(){
             complex *signals = (complex *)calloc(size, sizeof(complex));
             for (i = 0; i < size; i++){
                 complex c = {0, 0};
-                // simple implse 
-                // c.real = 1;
-                // c.imaginary = 0;
+                /* simple implse */
+                  // c.real = 1;
+                  // c.imaginary = 0;  
 
-                // init of a sigle wave
-                // c.real = 0;
-                // c.imaginary = 0;
+                /* init of a sigle wave */ 
+                  // c.real = 0;
+                  // c.imaginary = 0; 
                 signals[i] = c;
             }
             signals[1].real = size - 1; // a single cosine wave
 
             printf("The sinusoids and cosinusoids to be synthesized: \n");
             print_cpx_vector(signals, size);
-            char *filename_sig = "freq_complex_data.txt"; // file to store the transformned data
+            char *filename_sig = "freq_complex_data.txt"; // file to store the transformed data
             // erase the content in file first
             FILE* out_sig = fopen(filename_sig, "w");
             write_complex_vector(signals, size, filename_sig, out_sig);
@@ -166,28 +197,17 @@ int main(){
             complex *data_res_i = fft_radix2_inverse(data_res, N);
             print_cpx_vector(data_res_i, N);
 
-            free(data_res);
             free(data_res_i);
 
-        #endif
-
-        #ifdef TEST_REAL_FFT
-            uint32_t N = 16;
-            double data_real[16] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4};
-            // uint32_t N = 4;
-            // double data_real[4] = {1, 0, 2, 0};
-            printf("real FFT: forward.\n");
-            complex *data_res = real_fft_forward(data_real, N);
-            print_cpx_vector(data_res, N);
-            printf("\n");
-
-            free(data_res);
         #endif
 
         #ifdef TEST_FFT_PRIME
             uint32_t N = 17;
             uint32_t g = 3; // 3 is a primitive root of 17
             double data_real[17] = {2, 3, -1, 1, 2.5, 4, 3.2, 1, 5, 6, 4.3, 9, -3, 1, 2.5, 4, 1};
+            complex sol[17] = {{45.5,0}, {-13.115,2.312}, {8.114,-0.656}, {0.829,13.99}, {-3.266,-8.494}, {0.957,-11.981},
+                  {7.858,3.936}, {-12.003,-5.562}, {4.876,-8.973}, {4.876,8.973}, {-12.003,5.562}, {7.858,-3.936}, {0.957,11.981},
+                  {-3.266,8.494}, {0.829,-13.99}, {8.114,0.656}, {-13.115,-2.312}};
 
             // small
             // uint32_t N = 5;
@@ -198,7 +218,8 @@ int main(){
             printf("FFT prime input length: forward.\n");
             complex* res = fft_prime(data_cpx, N, g);
             print_cpx_vector(res, N);
-            printf("\n");
+            
+            complex_vec_comp(res, sol, N);
 
             free(res);
         #endif
@@ -226,11 +247,15 @@ int main(){
         data_c[1] = d2;
         data_c[2] = d3;
         data_c[3] = d4; 
+        
+        complex sol[4] = {{5,0}, {3,-2}, {-3,0}, {3,2}};
         complex *vector_out = (complex *)calloc(matrix_size_small, sizeof(complex)); // out-of-place transformation
 
         cpx_print_matrix(matrix_small, matrix_size_small);
         printf("\n");
         cpx_matrix_vector_multi(matrix_small, data_c, vector_out, matrix_size_small);
+
+        complex_vec_comp(sol, vector_out, matrix_size_small);
 
         // output transformed vector
         int i;
@@ -251,6 +276,7 @@ int main(){
         free(matrix_small);
     #endif
 
+    // compare the speed of naive DFT and FFT, and plot
     #ifdef SPEED_DFT_FFT
     uint32_t size_exp;
     uint32_t size;
@@ -295,10 +321,8 @@ int main(){
         free(rand_vector_real);
     }
     #endif
-    // TODO: make a test.c file to verify if the result is correct
     
-
-    return ret;
+    return 0;
 }
 
 void print_cpx_vector(complex *vector, uint32_t n){
@@ -340,4 +364,22 @@ void write_complex_vector(complex *vector, uint32_t n, char *filename, FILE *str
     }
 
     fflush(out_file);
+}
+
+bool complex_vec_comp(complex *v1, complex *v2, uint32_t n) {
+    uint32_t i;
+    for (i = 0; i < n; i++) {
+        double re1 = v1->real;
+        double re2 = v2->real;
+
+        double im1 = v1->imaginary;
+        double im2 = v2->imaginary;
+
+        if (re1 - re2 > 0.01 || im1 - im2 > 0.01) {
+            printf("Wrong result.\n");
+            return false;
+        }
+    }
+    printf("[OK]\n");
+    return true;
 }
