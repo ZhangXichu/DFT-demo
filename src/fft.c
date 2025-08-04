@@ -1,9 +1,9 @@
 #include <math.h>
 
-#include "include/fft.h"
-#include "include/config.h"
-#include "include/macros.h"
-# include "include/dft.h"
+#include "fft.h"
+#include "config.h"
+#include "macros.h"
+# include "dft.h"
 
 static void print_cpx_vector2(complex *vector, uint32_t n);
 static int mulp_inverse(uint32_t x, uint32_t N);

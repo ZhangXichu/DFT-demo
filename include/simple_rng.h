@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include "complex.h"
 
-complex *rand_vector_cpx;
-double *rand_vector_real;
+extern complex *rand_vector_cpx;
+extern double *rand_vector_real;
 
 /**
  * @brief  allocate memory to |rand_vector_cpx|
@@ -28,6 +28,6 @@ void prng(uint32_t size);
 //  * @note   
 //  * @retval None
 //  */
-// void free_rand_vector();
+void free_rand_vector();
 
 #endif 

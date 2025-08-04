@@ -1,15 +1,21 @@
 cmake_minimum_required(VERSION 3.10)
-project(ft_demo)
+project(ft_demo C)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_C_STANDARD 99)
 
 set(HEADER_DIR include)
 
-set(SOURCES main.c dft.c complex.c matrix.c fft.c simple_rng.c)
-set(HEADERS ${HEADER_DIR}/dft.h ${HEADER_DIR}/complex.h ${HEADER_DIR}/matrix.h ${HEADER_DIR}/config.h 
-    ${HEADER_DIR}/fft.h ${HEADER_DIR}/simple_rng.h ${HEADER_DIR}/macros.h)
-set(EXECUTABLE ft_demo)
+set(SOURCES
+    src/main.c
+    src/dft.c
+    src/complex.c
+    src/matrix.c
+    src/fft.c
+    src/simple_rng.c
+)
 
-add_executable(${EXECUTABLE} ${HEADERS} ${SOURCES})
+add_executable(ft_demo ${SOURCES})
+
+include_directories(include)
 
 target_link_libraries(ft_demo m) # link math.h to ft_demo

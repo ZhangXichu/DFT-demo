@@ -5,11 +5,11 @@
 # include <time.h>
 # include <stdbool.h>
 
-# include "include/dft.h"
-# include "include/matrix.h"
-# include "include/config.h"
-# include "include/fft.h"
-# include "include/simple_rng.h"
+# include "dft.h"
+# include "matrix.h"
+# include "config.h"
+# include "fft.h"
+# include "simple_rng.h"
 
 void print_cpx_vector(complex *vector, uint32_t n);
 void print_real_vector(double *vector, uint32_t n);

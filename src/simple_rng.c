@@ -1,7 +1,10 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "include/simple_rng.h"
+#include "simple_rng.h"
+
+complex *rand_vector_cpx = NULL;
+double *rand_vector_real = NULL;
 
 void init_rand_vector(uint32_t size){
     // allocate memory for the global rand_vector_cpx
@@ -23,7 +26,7 @@ void prng(uint32_t size){
     }
 }
 
-// void free_rand_vector(){
-//     free(rand_vector_cpx);
-//     free(rand_vector_real);
-// }
+void free_rand_vector(){
+    free(rand_vector_cpx);
+    free(rand_vector_real);
+}

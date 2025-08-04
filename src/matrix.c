@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "include/matrix.h"
+#include "matrix.h"
 
 complex** dft_matrix(uint32_t n) {
     printf("dft_matrix\n");

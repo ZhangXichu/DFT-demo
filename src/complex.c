@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <math.h>
-#include "include/complex.h"
+#include "complex.h"
 
 #define EPSILON pow(10, -6)
 

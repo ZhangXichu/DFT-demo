@@ -2,7 +2,7 @@
 # include <stdlib.h>
 # include <stdint.h>
 # include <math.h>
-# include "include/dft.h"
+# include "dft.h"
 
 complex* dft_complex_forward(double* data, uint32_t n){
     int i, j;
